@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: yum
+
+  # 테스트용 DB 생성
+  datasource:
+    url: "jdbc:mysql://15.164.131.187:3306/yum?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul"
+    username: yum
+    password: yum
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
