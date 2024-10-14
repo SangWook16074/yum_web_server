@@ -41,3 +41,6 @@ out/
 
 # 환경 변수 파일
 .env
+
+# macOS 관련 파일
+.DS_Store
