@@ -9,7 +9,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}  # 일반 사용자 이름
       MYSQL_PASSWORD: ${DB_PASSWORD}  # 일반 사용자 비밀번호
     ports:
-      - "${DB_PORT}:33060"  # DB 서버 포트 연결
+      - "33060:${DB_PORT}"  # DB 서버 포트 연결
     volumes:
       - mysql_data:/var/lib/mysql  # MySQL 데이터를 저장할 볼륨 정의
 
