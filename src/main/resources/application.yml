@@ -2,7 +2,8 @@ spring:
   application:
     name: yum
 
-  # 테스트용 DB 생성
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
