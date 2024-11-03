@@ -21,7 +21,7 @@ services:
       - db  # db 서비스가 준비된 후에 실행되도록 설정
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:${DB_PORT}/mydatabase  # MySQL 연결 URL
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}  # 데이터베이스 사용자 이름
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}  # 데이터베이스 사용자 이름
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}  # 데이터베이스 사용자 비밀번호
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"  # 포트 연결
