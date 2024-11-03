@@ -8,6 +8,7 @@ services:
       MYSQL_DATABASE: ${DB}  # 생성할 기본 데이터베이스 이름
       MYSQL_USER: ${DB_USERNAME}  # 일반 사용자 이름
       MYSQL_PASSWORD: ${DB_PASSWORD}  # 일반 사용자 비밀번호
+    restart: on-failure
     ports:
       - "33060:${DB_PORT}"  # DB 서버 포트 연결
     volumes:
@@ -23,6 +24,7 @@ services:
       SPRING_DATASOURCE_URL: ${DB_URL}  # MySQL 연결 URL
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}  # 데이터베이스 사용자 이름
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}  # 데이터베이스 사용자 비밀번호
+    restart: on-failure
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"  # 포트 연결
 
