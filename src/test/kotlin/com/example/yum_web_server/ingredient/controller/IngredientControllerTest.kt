@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import com.ninjasquad.springmockk.MockkBean
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.LocalDate
 
 @WebMvcTest(IngredientController::class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -24,31 +28,75 @@ class IngredientControllerTest {
     @MockkBean
     private lateinit var ingredientService : IngredientService
 
-    val ingredients : List<IngredientResponseDto> = listOf(
-        IngredientResponseDto(
-            id = 1,
-            name = "egg",
-            isFreezed = false,
-            isFavorite = false,
-            category = IngredientCategory.egg
-        ),
-        IngredientResponseDto(
-            id = 2,
-            name = "beef",
-            isFreezed = false,
-            isFavorite = false,
-            category = IngredientCategory.beef
-        ),
+
+    val ingredient1 = IngredientResponseDto(
+        id = 1,
+        name = "egg",
+        isFreezed = false,
+        isFavorite = false,
+        category = IngredientCategory.egg,
+        startAt = LocalDate.of(2024, 11, 12),
+        endAt = LocalDate.of(2024, 11, 19),
+    )
+    val ingredient2 = IngredientResponseDto(
+        id = 2,
+        name = "beef",
+        isFreezed = false,
+        isFavorite = false,
+        category = IngredientCategory.beef,
+        startAt = LocalDate.of(2024, 11, 12),
+        endAt = LocalDate.of(2024, 11, 19),
     )
 
-    @Test
-    fun `사용자 재료 조회 테스트 성공시 응답코드 200 반환`() {
+    @BeforeEach
+    fun setup() {
+        every { ingredientService.getMyIngredient() } returns listOf(
+            ingredient1,
+            ingredient2,
+        )
+        every { ingredientService.createIngredient(any()) } returns ingredient1
+    }
 
-        every { ingredientService.getMyIngredient() } returns ingredients
+    /**
+     * 재료 조회 컨트롤러 테스트
+     */
+    @Test
+    fun `사용자 재료 조회 테스트 성공시 응답코드 200 반환한다`() {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/ingredients"))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { ingredientService.getMyIngredient() }
+    }
+
+    @Test
+    fun `사용자 재료 조회 성공시 DB에서 사용자가 등록한 모든 재료를 가져온다`() {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/ingredients"))
+            .andExpect(jsonPath("$[0].name").value("egg"))
+            .andExpect(jsonPath("$[1].name").value("beef"))
+
+        verify(exactly = 1) { ingredientService.getMyIngredient() }
+    }
+
+    /**
+     * 재료 생성 테스트
+     */
+    @Test
+    fun `사용자 재료 생성 성공시 응답코드 201을 반환한다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """
+                {
+                    "name": "egg",
+                    "isFreezed": false,
+                    "category": "egg",
+                    "startAt": "2024-11-15",
+                    "endAt": "2024-11-16"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+            .andExpect(status().isCreated)
+
+        verify(exactly = 1) { ingredientService.createIngredient(any()) }
     }
 }

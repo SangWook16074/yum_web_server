@@ -2,11 +2,8 @@ package com.example.yum_web_server.ingredient.entity
 
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
+import java.time.LocalDate
 
 @Entity
 class Ingredient(
@@ -25,6 +22,14 @@ class Ingredient(
 
     @Column
     var isFavorite : Boolean,
+
+    @Column
+    @Temporal(value = TemporalType.DATE)
+    var startAt : LocalDate,
+
+    @Column
+    @Temporal(value = TemporalType.DATE)
+    var endAt : LocalDate,
 ) {
     fun toResponse() : IngredientResponseDto = IngredientResponseDto(
         id = id,
@@ -32,5 +37,7 @@ class Ingredient(
         isFreezed = isFreezed,
         isFavorite = isFavorite,
         category = category,
+        startAt = startAt,
+        endAt = endAt,
     )
 }

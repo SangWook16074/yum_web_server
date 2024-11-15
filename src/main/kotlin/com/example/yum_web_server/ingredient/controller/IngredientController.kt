@@ -1,9 +1,13 @@
 package com.example.yum_web_server.ingredient.controller
 
+import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
 import com.example.yum_web_server.ingredient.service.IngredientService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -18,6 +22,16 @@ class IngredientController(
     @GetMapping
     private fun getMyIngredients() : ResponseEntity<List<IngredientResponseDto>> {
         val result = ingredientService.getMyIngredient()
-        return ResponseEntity.ok(result)
+        return ResponseEntity.status(HttpStatus.OK).body(result)
+    }
+
+    /**
+     * 나의 재료 생성 Api
+     */
+    @PostMapping
+    private fun createIngredient(@RequestBody ingredientRequestDto: IngredientRequestDto)
+    : ResponseEntity<IngredientResponseDto> {
+        val result = ingredientService.createIngredient(ingredientRequestDto)
+        return ResponseEntity.status(HttpStatus.CREATED).body(result)
     }
 }
