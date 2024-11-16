@@ -99,4 +99,95 @@ class IngredientControllerTest {
 
         verify(exactly = 1) { ingredientService.createIngredient(any()) }
     }
+
+    @Test
+    fun `사용자 재료 생성 성공시 생성된 재료가 반환된다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """
+                {
+                    "name": "egg",
+                    "isFreezed": false,
+                    "category": "egg",
+                    "startAt": "2024-11-15",
+                    "endAt": "2024-11-16"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+            .andExpect(jsonPath("$.name").value("egg"))
+    }
+
+    @Test
+    fun `사용자 재료 생성시 이름이 없어선 안된다 이름을 입력하지 않으면 에러메시지가 반환된다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """
+                {
+                    "name": "",
+                    "isFreezed": false,
+                    "category": "egg",
+                    "startAt": "2024-11-15",
+                    "endAt": "2024-11-16"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$['data']._name").value("이름을 입력하세요!"))
+    }
+
+    @Test
+    fun `사용자 재료 생성시 카테고리가 올바르지 못하면 "잘못된 재료 카테고리입니다!"메세지가 반환된다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """
+                {
+                    "name": "egg",
+                    "isFreezed": false,
+                    "category": "eg",
+                    "startAt": "2024-11-15",
+                    "endAt": "2024-11-16"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$['data']._category").value("잘못된 재료 카테고리입니다!"))
+    }
+
+    @Test
+    fun `사용자 재료 생성시 카테고리가 비어있으면 카테고리를 "카테고리를 입력하세요!"메세지가 반환된다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """               
+                {
+                    "name": "egg",
+                    "isFreezed": false,
+                    "category": "",
+                    "startAt": "2024-11-15",
+                    "endAt": "2024-11-16"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest)
+            .andExpect(
+                jsonPath("$['data']._category").value("카테고리를 입력하세요!")
+        )
+    }
+
+    @Test
+    fun `사용자 재료 생성시 날짜 형식이 잘못되면 "잘못된 날짜형식입니다!"메세지가 반환된다`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/ingredients").content(
+            """               
+                {
+                    "name": "egg",
+                    "isFreezed": false,
+                    "category": "egg",
+                    "startAt": "2024-1115",
+                    "endAt": "2024-11-46"
+                }
+            """.trimIndent()
+        ).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest)
+            .andExpect(
+                jsonPath("$['data']._startAt").value("잘못된 날짜형식입니다!")
+            )
+            .andExpect(
+                jsonPath("$['data']._endAt").value("잘못된 날짜형식입니다!")
+            )
+    }
 }

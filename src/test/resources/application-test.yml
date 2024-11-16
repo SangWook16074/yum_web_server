@@ -1,4 +1,7 @@
 spring:
+  web:
+    resources:
+      add-mappings: false
 
   datasource:
     driver-class-name: org.h2.Driver

@@ -79,7 +79,7 @@ class IngredientServiceTest {
         val ingredientRequestDto = IngredientRequestDto(
             _name = "egg",
             _isFreezed = false,
-            _category = IngredientCategory.egg,
+            _category = "egg",
             _startAt = "2024-11-11",
             _endAt = "2024-11-19",
         )
