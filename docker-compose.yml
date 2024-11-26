@@ -26,7 +26,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}  # 데이터베이스 사용자 비밀번호
     restart: on-failure
     ports:
-      - "8081:${SERVER_PORT}"  # 포트 연결
+      - "${INGREDIENT_SERVER_PORT}:${SERVER_PORT}"  # 포트 연결
 
 networks:
   yum-net: {}
