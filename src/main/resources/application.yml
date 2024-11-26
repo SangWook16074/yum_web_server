@@ -1,6 +1,6 @@
 spring:
   application:
-    name: yum
+    name: yum-ingredient-server
   web:
     resources:
       add-mappings: false

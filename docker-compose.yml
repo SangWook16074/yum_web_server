@@ -17,7 +17,7 @@ services:
   # Spring Boot 서비스 정의
   app:
     image: ${IMAGE_NAME}  # 빌드된 Spring Boot Docker 이미지
-    container_name: yum-server-container  # 컨테이너 이름
+    container_name: yum-ingredient-server-container  # 컨테이너 이름
     depends_on:
       - db  # db 서비스가 준비된 후에 실행되도록 설정
     environment:

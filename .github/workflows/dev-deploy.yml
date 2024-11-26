@@ -54,7 +54,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
-            sudo docker stop yum-server-container
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/yum-server-container
+            sudo docker stop yum-ingredient-server-container
+            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/yum-ingredient-server-container
             sudo docker-compose -f /home/${{ secrets.AWS_USER }}/app/yum_web_server/docker-compose.yml up -d
             sudo docker image prune -a -f
