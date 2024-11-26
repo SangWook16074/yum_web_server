@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import com.ninjasquad.springmockk.MockkBean
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -75,6 +74,7 @@ class IngredientControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/ingredients"))
             .andExpect(jsonPath("$[0].name").value("egg"))
             .andExpect(jsonPath("$[1].name").value("beef"))
+            .andExpect(jsonPath("$[0].startAt").value("2024-11-12"))
 
         verify(exactly = 1) { ingredientService.getMyIngredient() }
     }
