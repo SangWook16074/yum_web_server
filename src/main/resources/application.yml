@@ -28,7 +28,7 @@ spring:
 
 springdoc:
   api-docs:
-    version: 1_0
+    version: OPENAPI_3_1
     enabled: true
     path: /api/ingredients/v3/api-docs
   enable-spring-security: true
