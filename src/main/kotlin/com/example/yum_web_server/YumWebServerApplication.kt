@@ -11,12 +11,3 @@ class YumWebServerApplication
 fun main(args: Array<String>) {
 	runApplication<YumWebServerApplication>(*args)
 }
-
-@RestController
-class HelloController {
-
-	@GetMapping("/hello")
-	fun hello() : String {
-		return "Hello!"
-	}
-}
