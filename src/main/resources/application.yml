@@ -27,10 +27,6 @@ spring:
     show_sql: true
 
 springdoc:
-  api-docs:
-    version: OPENAPI_3_1
-    enabled: true
-    path: /api/ingredients/v3/api-docs
+  swagger-ui:
+    path: /api/ingredients/swagger-ui/index.html
   enable-spring-security: true
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
