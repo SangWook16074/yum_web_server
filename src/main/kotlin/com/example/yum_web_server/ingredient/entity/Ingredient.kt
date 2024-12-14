@@ -2,33 +2,35 @@ package com.example.yum_web_server.ingredient.entity
 
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
-import jakarta.persistence.*
+import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
-@Entity
-class Ingredient(
+@Table("ingredient")
+data class Ingredient(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     val id : Long? = null,
 
-    @Column(length = 100)
+    @Column
     var name : String,
 
-    @Column(length = 5)
+    @Column("is_freezed")
     var isFreezed : Boolean,
 
-    @Column(length = 30)
-    var category : IngredientCategory,
-
-    @Column
+    @Column("is_favorite")
     var isFavorite : Boolean,
 
     @Column
-    @Temporal(value = TemporalType.DATE)
+    var category : IngredientCategory,
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column("start_at")
     var startAt : LocalDate,
 
-    @Column
-    @Temporal(value = TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column("end_at")
     var endAt : LocalDate,
 ) {
     fun toResponse() : IngredientResponseDto = IngredientResponseDto(

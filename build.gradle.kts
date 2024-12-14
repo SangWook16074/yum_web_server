@@ -20,25 +20,29 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-validation:3.3.5")
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("io.r2dbc:r2dbc-pool")
 	runtimeOnly("com.mysql:mysql-connector-j")
+	runtimeOnly("io.asyncer:r2dbc-mysql:1.3.0")
+
+	// 테스트 의존성
 	testImplementation("io.mockk:mockk:1.13.13")
 	testImplementation("com.h2database:h2:2.3.232")
+	testRuntimeOnly("io.r2dbc:r2dbc-h2")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("io.projectreactor:reactor-test:3.7.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	// 테스트 코드에서 Mock 객체 생성 및 사용하기 위한 라이브러리
 	testImplementation("io.mockk:mockk:1.13.13")
-	// Spring Boot 애플리케이션의 단위 테스트 및 통합 테스트를 위한 기본 테스트 라이브러리
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	// OpenAPI 3 문서화 및 Swagger UI 제공을 위한 라이브러리
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
 
 kotlin {

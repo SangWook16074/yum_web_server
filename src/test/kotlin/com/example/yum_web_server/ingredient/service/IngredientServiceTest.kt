@@ -4,9 +4,12 @@ import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
 import com.example.yum_web_server.ingredient.entity.Ingredient
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
 import com.example.yum_web_server.ingredient.repository.IngredientRepository
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -18,7 +21,7 @@ class IngredientServiceTest {
 
 
     @Test
-    fun `재료 조회 테스트`() {
+    fun `재료 조회 테스트`() : Unit = runTest {
         val ingredients : List<Ingredient> = listOf(
             Ingredient(
                 id = 1,
@@ -39,11 +42,11 @@ class IngredientServiceTest {
                 endAt = LocalDate.of(2024, 11, 19),
             ),
         )
-        every { ingredientRepository.findAll() } returns ingredients
+        coEvery { ingredientRepository.findAllIngredients() } returns ingredients
 
-        val result = ingredientService.getMyIngredient()
+        val result = ingredientService.getMyIngredient().toList()
 
-        verify(exactly = 1) { ingredientRepository.findAll() }
+        coVerify(exactly = 1) { ingredientRepository.findAllIngredients() }
 
         assertThat(result.size).isEqualTo(2)
         /**
@@ -65,7 +68,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    fun `재료 생성 테스트`() {
+    fun `재료 생성 테스트`() : Unit = runTest {
         val ingredient = Ingredient(
             id = 1,
             name = "egg",
@@ -83,11 +86,11 @@ class IngredientServiceTest {
             _startAt = "2024-11-11",
             _endAt = "2024-11-19",
         )
-        every { ingredientRepository.save(any()) } returns ingredient
+        coEvery { ingredientRepository.save(any()) } returns ingredient
 
         val result = ingredientService.createIngredient(ingredientRequestDto)
 
-        verify(exactly = 1) { ingredientRepository.save(any()) }
+        coVerify(exactly = 1) { ingredientRepository.save(any()) }
 
         assertThat(result.name).isEqualTo("egg")
         assertThat(result.isFreezed).isFalse()
