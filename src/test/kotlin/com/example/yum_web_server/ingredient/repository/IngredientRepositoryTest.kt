@@ -66,4 +66,14 @@ class IngredientRepositoryTest @Autowired constructor(
         }
 
     }
+
+    @Test
+    fun `재료 삭제 테스트`() {
+        val ingredientToDelete = ingredientRepository.save(ingredient)
+
+        ingredientRepository.deleteById(ingredientToDelete.id!!)
+
+        val result = ingredientRepository.findById(ingredientToDelete.id!!)
+        assertThat(result).isEmpty
+    }
 }

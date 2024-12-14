@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import com.ninjasquad.springmockk.MockkBean
+import io.mockk.justRun
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -54,6 +55,8 @@ class IngredientControllerTest {
             ingredient2,
         )
         every { ingredientService.createIngredient(any()) } returns ingredient1
+
+        justRun { ingredientService.deleteIngredient(any()) }
     }
 
     /**
@@ -189,5 +192,14 @@ class IngredientControllerTest {
             .andExpect(
                 jsonPath("$['data']._endAt").value("잘못된 날짜형식입니다!")
             )
+    }
+    @Test
+    fun `사용자 재료 삭제 성공시 응답코드 204를 반환한다`() {
+
+        val id = 1L
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/ingredients/$id")).andExpect { status().isNoContent }
+
+        verify(exactly = 1) { ingredientService.deleteIngredient(id) }
     }
 }

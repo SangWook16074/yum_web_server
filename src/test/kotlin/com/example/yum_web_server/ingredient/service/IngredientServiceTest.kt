@@ -96,6 +96,5 @@ class IngredientServiceTest {
         assertThat(result.startAt.year).isEqualTo(2024)
         assertThat(result.startAt.monthValue).isEqualTo(11)
         assertThat(result.startAt.dayOfMonth).isEqualTo(12)
-
     }
 }
