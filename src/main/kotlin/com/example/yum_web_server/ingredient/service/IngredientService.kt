@@ -27,4 +27,12 @@ class IngredientService @Autowired(required = false) constructor(
         val result = ingredientRepository.save(ingredientRequestDto.toEntity())
         return result.toResponse()
     }
+
+    /**
+     * 재료 삭제하기
+     */
+    @Transactional
+    suspend fun deleteIngredient(id: Long) {
+        ingredientRepository.deleteById(id)
+    }
 }
