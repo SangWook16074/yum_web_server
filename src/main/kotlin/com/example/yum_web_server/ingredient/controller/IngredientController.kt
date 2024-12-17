@@ -8,11 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Ingredient 서버" ,description = "재료 관련 Api",)
 @RestController
@@ -39,5 +35,15 @@ class IngredientController(
     : ResponseEntity<IngredientResponseDto> {
         val result = ingredientService.createIngredient(ingredientRequestDto)
         return ResponseEntity.status(HttpStatus.CREATED).body(result)
+    }
+
+    /**
+     * 나의 재료 삭제 Api
+     */
+    @Operation(description = "나의 재료 삭제 Api")
+    @DeleteMapping("/{id}")
+    private fun deleteIngredient(@PathVariable id: Long): ResponseEntity<Void> {
+        ingredientService.deleteIngredient(id)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

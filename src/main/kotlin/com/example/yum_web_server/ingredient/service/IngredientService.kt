@@ -26,4 +26,13 @@ class IngredientService(
         val result = ingredientRepository.save(ingredientRequestDto.toEntity())
         return result.toResponse()
     }
+
+    /**
+     * 재료 삭제하기
+     */
+    fun deleteIngredient(id: Long) {
+        ingredientRepository.deleteById(id)
+    }
+
+
 }
