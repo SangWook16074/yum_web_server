@@ -5,6 +5,7 @@ import com.example.yum_web_server.ingredient.entity.Ingredient
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import java.time.LocalDate
@@ -18,12 +19,10 @@ data class IngredientRequestDto(
     @JsonProperty("isFreezed")
     private var _isFreezed : Boolean? = false,
 
-    @field:NotBlank(message = "카테고리를 입력하세요!")
     @field:ValidEnum(enumClass = IngredientCategory::class, message = "잘못된 재료 카테고리입니다!")
     @JsonProperty("category")
     private var _category: String?,
 
-    @field:NotBlank(message = "시작날짜를 입력하세요!")
     @field:Pattern(
         regexp = "^([12]\\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])\$",
         message = "잘못된 날짜형식입니다!"
@@ -31,7 +30,6 @@ data class IngredientRequestDto(
     @JsonProperty("startAt")
     private var _startAt : String?,
 
-    @field:NotBlank(message = "종료날짜를 입력하세요!")
     @field:Pattern(
         regexp = "^([12]\\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])\$",
         message = "잘못된 날짜형식입니다!"

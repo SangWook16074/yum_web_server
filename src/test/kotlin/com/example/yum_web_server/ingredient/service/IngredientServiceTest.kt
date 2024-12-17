@@ -4,101 +4,99 @@ import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
 import com.example.yum_web_server.ingredient.entity.Ingredient
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
 import com.example.yum_web_server.ingredient.repository.IngredientRepository
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockk
-import io.mockk.verify
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.*
 import java.time.LocalDate
 
+class IngredientServiceTest : BehaviorSpec({
+    val ingredientRepository = mockk<IngredientRepository>()
+    val ingredientService = IngredientService(ingredientRepository)
+    Given("Ingredient Service에서") {
+        coroutineDebugProbes = true
+        afterTest {
+            clearAllMocks()
+        }
+        When("재료가 이미 있는 경우에") {
+            val ingredients : List<Ingredient> = listOf(
+                Ingredient(
+                    id = 1,
+                    name = "egg",
+                    isFreezed = false,
+                    isFavorite = false,
+                    category = IngredientCategory.egg,
+                    startAt = LocalDate.of(2024, 11, 12),
+                    endAt = LocalDate.of(2024, 11, 19),
+                ),
+                Ingredient(
+                    id = 2,
+                    name = "beef",
+                    isFreezed = false,
+                    isFavorite = false,
+                    category = IngredientCategory.beef,
+                    startAt = LocalDate.of(2024, 11, 12),
+                    endAt = LocalDate.of(2024, 11, 19),
+                ),
+            )
+            coEvery { ingredientRepository.findAllIngredients() } returns ingredients
+            Then("getMyIngredient()는 2개의 재료가 반환된다.") {
+                val result = ingredientService.getMyIngredient()
+                coVerify(exactly = 1) { ingredientRepository.findAllIngredients() }
+                result.size shouldBe 2
+                with(result[0]) {
+                    id shouldBe 1L
+                    name shouldBe "egg"
+                    isFreezed shouldBe false
+                    isFavorite shouldBe false
+                    category shouldBe IngredientCategory.egg
+                }
+                with(result[1]) {
+                    id shouldBe 2L
+                    name shouldBe "beef"
+                    isFreezed shouldBe false
+                    isFavorite shouldBe false
+                    category shouldBe IngredientCategory.beef
+                }
+            }
 
-class IngredientServiceTest {
-    private val ingredientRepository : IngredientRepository = mockk()
-    private val ingredientService : IngredientService = IngredientService(ingredientRepository = ingredientRepository)
+            Then("createIngredient()는 생성한 재료를 반환한다.") {
+                val ingredient = Ingredient(
+                    id = 1,
+                    name = "egg",
+                    isFreezed = false,
+                    isFavorite = false,
+                    category = IngredientCategory.egg,
+                    startAt = LocalDate.of(2024, 11, 12),
+                    endAt = LocalDate.of(2024, 11, 19),
+                )
+                val ingredientRequestDto = IngredientRequestDto(
+                    _name = "egg",
+                    _isFreezed = false,
+                    _category = "egg",
+                    _startAt = "2024-11-12",
+                    _endAt = "2024-11-19",
+                )
+                coEvery { ingredientRepository.save(any()) } returns ingredient
+                val result = ingredientService.createIngredient(ingredientRequestDto)
+                coVerify(exactly = 1) { ingredientRepository.save(any()) }
+                with(result) {
+                    name shouldBe "egg"
+                    isFreezed shouldBe false
+                    isFavorite shouldBe false
+                    category shouldBe IngredientCategory.egg
+                    startAt shouldBe LocalDate.of(2024, 11, 12)
+                    endAt shouldBe LocalDate.of(2024, 11, 19)
+                }
+            }
+        }
 
-
-    @Test
-    fun `재료 조회 테스트`() : Unit = runTest {
-        val ingredients : List<Ingredient> = listOf(
-            Ingredient(
-                id = 1,
-                name = "egg",
-                isFreezed = false,
-                isFavorite = false,
-                category = IngredientCategory.egg,
-                startAt = LocalDate.of(2024, 11, 12),
-                endAt = LocalDate.of(2024, 11, 19),
-            ),
-            Ingredient(
-                id = 2,
-                name = "beef",
-                isFreezed = false,
-                isFavorite = false,
-                category = IngredientCategory.beef,
-                startAt = LocalDate.of(2024, 11, 12),
-                endAt = LocalDate.of(2024, 11, 19),
-            ),
-        )
-        coEvery { ingredientRepository.findAllIngredients() } returns ingredients
-
-        val result = ingredientService.getMyIngredient().toList()
-
-        coVerify(exactly = 1) { ingredientRepository.findAllIngredients() }
-
-        assertThat(result.size).isEqualTo(2)
-        /**
-         * 첫번째 재료 검증
-         */
-        assertThat(result.first().id).isEqualTo(1L)
-        assertThat(result.first().name).isEqualTo("egg")
-        assertThat(result.first().isFreezed).isEqualTo(false)
-        assertThat(result.first().isFavorite).isEqualTo(false)
-        assertThat(result.first().category).isEqualTo(IngredientCategory.egg)
-        /**
-         * 두번째 재료 검증
-         */
-        assertThat(result.last().id).isEqualTo(2L)
-        assertThat(result.last().name).isEqualTo("beef")
-        assertThat(result.last().isFreezed).isEqualTo(false)
-        assertThat(result.last().isFavorite).isEqualTo(false)
-        assertThat(result.last().category).isEqualTo(IngredientCategory.beef)
+        When("재료가 없는 경우에") {
+            coEvery { ingredientRepository.findAllIngredients() } returns emptyList()
+            Then("getMyIngredients()는 0개의 재료를 반환한다") {
+                val result = ingredientService.getMyIngredient()
+                coVerify(exactly = 1) { ingredientRepository.findAllIngredients() }
+                result.size shouldBe 0
+            }
+        }
     }
-
-    @Test
-    fun `재료 생성 테스트`() : Unit = runTest {
-        val ingredient = Ingredient(
-            id = 1,
-            name = "egg",
-            isFreezed = false,
-            isFavorite = false,
-            category = IngredientCategory.egg,
-            startAt = LocalDate.of(2024, 11, 12),
-            endAt = LocalDate.of(2024, 11, 19),
-        )
-
-        val ingredientRequestDto = IngredientRequestDto(
-            _name = "egg",
-            _isFreezed = false,
-            _category = "egg",
-            _startAt = "2024-11-11",
-            _endAt = "2024-11-19",
-        )
-        coEvery { ingredientRepository.save(any()) } returns ingredient
-
-        val result = ingredientService.createIngredient(ingredientRequestDto)
-
-        coVerify(exactly = 1) { ingredientRepository.save(any()) }
-
-        assertThat(result.name).isEqualTo("egg")
-        assertThat(result.isFreezed).isFalse()
-        assertThat(result.isFavorite).isFalse()
-        assertThat(result.category).isEqualTo(IngredientCategory.egg)
-        assertThat(result.startAt.year).isEqualTo(2024)
-        assertThat(result.startAt.monthValue).isEqualTo(11)
-        assertThat(result.startAt.dayOfMonth).isEqualTo(12)
-
-    }
-}
+})

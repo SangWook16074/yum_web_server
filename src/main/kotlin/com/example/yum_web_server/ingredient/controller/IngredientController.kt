@@ -8,18 +8,20 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Ingredient 서버" ,description = "재료 관련 Api",)
 @RestController
 @RequestMapping("/api/ingredients")
-class IngredientController @Autowired constructor(
+class IngredientController @Autowired(required = false) constructor(
     private val ingredientService: IngredientService
 ) {
     /**
@@ -37,8 +39,8 @@ class IngredientController @Autowired constructor(
      * 나의 재료 생성 Api
      */
     @Operation(description = "나의 재료 생성 Api")
-    @PostMapping
-    suspend fun createIngredient(@RequestBody @Valid ingredientRequestDto: IngredientRequestDto)
+    @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
+    suspend fun createIngredient(@RequestBody @Validated ingredientRequestDto: IngredientRequestDto)
     : ResponseEntity<IngredientResponseDto>
     {
         val result = ingredientService.createIngredient(ingredientRequestDto)

@@ -1,9 +1,6 @@
 spring:
   application:
     name: yum-ingredient-server
-  web:
-    resources:
-      add-mappings: false
 
   config:
     import: optional:file:.env[.properties]

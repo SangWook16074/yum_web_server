@@ -24,10 +24,9 @@ class ValidEnumValidator : ConstraintValidator<ValidEnum, Any?> {
         enumValues = annotaion.enumClass.java.enumConstants
     }
 
-
     override fun isValid(value: Any?, context: ConstraintValidatorContext?): Boolean {
         // null 또는 blank는 검증하지 않음
-        if (value == null || value.toString().isBlank()) {
+        if (value == null) {
             return true
         }
         // enum에 포함되지 않는 값은 false 반환

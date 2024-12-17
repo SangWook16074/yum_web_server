@@ -2,74 +2,83 @@ package com.example.yum_web_server.ingredient.repository
 
 import com.example.yum_web_server.ingredient.entity.Ingredient
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.be
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import java.time.LocalDate
 
 @DataR2dbcTest
-@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestPropertySource(locations = ["classpath:application-test.yml"])
-class IngredientRepositoryTest @Autowired constructor(
-    private val ingredientRepository: IngredientRepository,
-) {
-    /**
-     * 테스트 데이터
-     */
-    val ingredient : Ingredient = Ingredient(
-        name = "egg",
-        isFreezed = false,
-        isFavorite = false,
-        category = IngredientCategory.egg,
-        startAt = LocalDate.of(2024, 11, 12),
-        endAt = LocalDate.of(2024, 11, 19),
-    )
+class IngredientRepositoryTest(
+    private val ingredientRepository: IngredientRepository
+) : BehaviorSpec({
+    Given("Ingredient Repository") {
+        coroutineDebugProbes = true
+        beforeTest {
+            clearAllMocks()
+            ingredientRepository.deleteAll()
+        }
+        When("재료가 등록되어 있는 경우에") {
+            beforeTest {
+                val ingredient : Ingredient = Ingredient(
+                    name = "egg",
+                    isFreezed = false,
+                    isFavorite = false,
+                    category = IngredientCategory.egg,
+                    startAt = LocalDate.of(2024, 11, 12),
+                    endAt = LocalDate.of(2024, 11, 19),
+                )
+                ingredientRepository.save(ingredient)
+            }
+            afterTest {
+                ingredientRepository.deleteAll()
+            }
+            Then("재료를 호출하면 1개가 반환된다.") {
+                val result = ingredientRepository.findAllIngredients()
+                result.let { ingredients ->
+                    ingredients.size shouldBe 1
+                    val first = ingredients[0]
+                    first.name shouldBe "egg"
+                    first.category shouldBe IngredientCategory.egg
+                    first.isFreezed shouldBe false
+                    first.isFavorite shouldBe false
+                    first.startAt shouldBe LocalDate.of(2024, 11, 12)
+                    first.endAt shouldBe LocalDate.of(2024, 11, 19)
+                }
+            }
 
-    @BeforeEach
-    fun setup() : Unit = runBlocking {
-        ingredientRepository.save(ingredient)
-    }
-
-    @AfterEach
-    fun tearDown() = runBlocking {
-        ingredientRepository.deleteAll()
-    }
-
-    @Test
-    fun `재료 조회 테스트`() = runTest {
-        val result = ingredientRepository.findAllIngredients()
-
-        assertThat(result).hasSize(1)
-        assertThat(result[0].name).isEqualTo("egg")
-        assertThat(result[0].category).isEqualTo(IngredientCategory.egg)
-        assertThat(result[0].startAt).isEqualTo(LocalDate.of(2024, 11, 12))
-        assertThat(result[0].endAt).isEqualTo(LocalDate.of(2024, 11, 19))
-    }
-
-    @Test
-    fun `재료 생성 테스트`() = runTest {
-
-        ingredientRepository.save(ingredient)
-        val result = ingredientRepository.save(ingredient)
-
-        with(result) {
-            assertThat(name).isEqualTo("egg")
-            assertThat(isFreezed).isEqualTo(false)
-            assertThat(isFavorite).isEqualTo(false)
-            assertThat(startAt).isEqualTo(LocalDate.of(2024, 11, 12))
-            assertThat(endAt).isEqualTo(LocalDate.of(2024, 11, 19))
-            assertThat(category).isEqualTo(IngredientCategory.egg)
+            Then("새로운 재료를 생성하면 생성한 재료를 반환한다.") {
+                val newIngredient = Ingredient(
+                    name = "egg",
+                    isFreezed = false,
+                    isFavorite = false,
+                    category = IngredientCategory.egg,
+                    startAt = LocalDate.of(2024, 11, 12),
+                    endAt = LocalDate.of(2024, 11, 19),
+                )
+                val result = ingredientRepository.save(newIngredient)
+                with(result) {
+                    name shouldBe "egg"
+                    isFreezed shouldBe false
+                    isFavorite shouldBe false
+                    category shouldBe IngredientCategory.egg
+                    startAt shouldBe LocalDate.of(2024, 11, 12)
+                    endAt shouldBe LocalDate.of(2024, 11, 19)
+                }
+            }
         }
 
+        When("재료가 등록되지 않은 경우에") {
+            afterTest{
+                ingredientRepository.deleteAll()
+            }
+            Then("재료를 호출하면 0개가 반환된다.") {
+                val result = ingredientRepository.findAllIngredients()
+                result.size shouldBe 0
+            }
+        }
     }
-}
+})
