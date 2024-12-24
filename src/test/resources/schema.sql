@@ -1,9 +1,15 @@
+DROP TABLE IF EXISTS ingredient;
+DROP TABLE IF EXISTS favorite;
+
 CREATE TABLE IF NOT EXISTS ingredient (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     is_freezed BOOLEAN NOT NULL,
-    is_favorite BOOLEAN NOT NULL,
     category VARCHAR(100) NOT NULL,
     start_at TIMESTAMP NOT NULL,
     end_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS favorite (
+    category VARCHAR(100) PRIMARY KEY
 );

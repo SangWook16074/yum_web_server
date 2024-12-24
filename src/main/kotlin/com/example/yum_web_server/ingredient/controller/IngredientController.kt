@@ -1,5 +1,7 @@
 package com.example.yum_web_server.ingredient.controller
 
+import com.example.yum_web_server.ingredient.dto.FavoriteRequestDto
+import com.example.yum_web_server.ingredient.dto.FavoriteResponseDto
 import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
 import com.example.yum_web_server.ingredient.service.IngredientService
@@ -21,7 +23,7 @@ class IngredientController(
      */
     @Operation(description = "나의 재료 불러오기 Api")
     @GetMapping
-    suspend fun getMyIngredients() : ResponseEntity<List<IngredientResponseDto>> {
+    private suspend fun getMyIngredients() : ResponseEntity<List<IngredientResponseDto>> {
         val result = ingredientService.getMyIngredient()
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
@@ -31,7 +33,7 @@ class IngredientController(
      */
     @Operation(description = "나의 재료 생성 Api")
     @PostMapping
-    suspend fun createIngredient(@RequestBody @Valid ingredientRequestDto: IngredientRequestDto)
+    private suspend fun createIngredient(@RequestBody @Valid ingredientRequestDto: IngredientRequestDto)
     : ResponseEntity<IngredientResponseDto>
     {
         val result = ingredientService.createIngredient(ingredientRequestDto)
@@ -43,8 +45,41 @@ class IngredientController(
      */
     @Operation(description = "나의 재료 삭제 Api")
     @DeleteMapping("/{id}")
-    suspend fun deleteIngredient(@PathVariable id: Long): ResponseEntity<Void> {
+    private suspend fun deleteIngredient(@PathVariable id: Long): ResponseEntity<Void> {
         ingredientService.deleteIngredient(id)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    /**
+     * 나의 즐겨찾기 재료 불러오기 Api
+     */
+    @Operation(description = "나의 즐겨찾기 재료 불러오기 Api")
+    @GetMapping("/favorites")
+    private suspend fun getMyFavoriteIngredients() : ResponseEntity<List<FavoriteResponseDto>> {
+        val result = ingredientService.getMyFavoriteIngredients()
+        return ResponseEntity.status(HttpStatus.OK).body(result)
+    }
+
+    /**
+     * 나의 즐겨찾기 재료 추가 Api
+     */
+    @Operation(description = "즐겨찾기 재료 추가하기 Api")
+    @PostMapping("/favorites")
+    private suspend fun createNewFavorite(@Valid @RequestBody favoriteRequestDto: FavoriteRequestDto)
+    : ResponseEntity<FavoriteResponseDto> {
+        val result = ingredientService.createNewFavorite(favoriteRequestDto)
+        return ResponseEntity.status(HttpStatus.CREATED).body(result)
+    }
+
+    /**
+     * 나의 즐겨찾기 재료 삭제 Api
+     */
+    @Operation(description = "즐겨찾기 재료 삭제하기 Api")
+    @DeleteMapping("favorites")
+    private suspend fun deleteFavorite(@Valid @RequestBody favoriteRequestDto: FavoriteRequestDto)
+    : ResponseEntity<String>
+    {
+        val result = ingredientService.deleteFavorite(favoriteRequestDto)
+        return ResponseEntity.status(HttpStatus.OK).body(result)
     }
 }

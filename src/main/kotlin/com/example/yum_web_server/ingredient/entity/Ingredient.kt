@@ -16,28 +16,24 @@ data class Ingredient(
     @Column
     var name : String,
 
-    @Column("is_freezed")
+    @Column("IS_FREEZED")
     var isFreezed : Boolean,
-
-    @Column("is_favorite")
-    var isFavorite : Boolean,
 
     @Column
     var category : IngredientCategory,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column("start_at")
+    @Column("START_AT")
     var startAt : LocalDate,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column("end_at")
+    @Column("END_AT")
     var endAt : LocalDate,
 ) {
     fun toResponse() : IngredientResponseDto = IngredientResponseDto(
         id = id,
         name = name,
         isFreezed = isFreezed,
-        isFavorite = isFavorite,
         category = category,
         startAt = startAt,
         endAt = endAt,

@@ -49,10 +49,8 @@ data class IngredientRequestDto(
         get() = _endAt!!.toLocalDate()
 
     fun toEntity() : Ingredient = Ingredient(
-        id = null,
         name = name,
         isFreezed = isFreezed,
-        isFavorite = false,
         category = category,
         startAt = startAt,
         endAt = endAt,
@@ -66,7 +64,6 @@ data class IngredientResponseDto(
     val id : Long?,
     val name : String,
     val isFreezed : Boolean,
-    val isFavorite : Boolean,
     val category: IngredientCategory,
     val startAt : LocalDate,
     val endAt: LocalDate,

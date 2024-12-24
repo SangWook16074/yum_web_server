@@ -1,4 +1,4 @@
-package com.example.yum_web_server.config
+package com.example.yum_web_server.common.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter

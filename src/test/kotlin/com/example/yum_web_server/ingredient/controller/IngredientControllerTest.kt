@@ -1,5 +1,6 @@
 package com.example.yum_web_server.ingredient.controller
 
+import com.example.yum_web_server.ingredient.dto.FavoriteResponseDto
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
 import com.example.yum_web_server.ingredient.service.IngredientService
@@ -11,10 +12,14 @@ import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
+import org.springframework.web.reactive.function.BodyInserter
+import org.springframework.web.reactive.function.BodyInserters
+import reactor.core.publisher.Mono
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,7 +39,6 @@ class IngredientControllerTest(
                 id = 1,
                 name = "egg",
                 isFreezed = false,
-                isFavorite = false,
                 category = IngredientCategory.egg,
                 startAt = LocalDate.of(2024, 11, 12),
                 endAt = LocalDate.of(2024, 11, 19),
@@ -43,7 +47,6 @@ class IngredientControllerTest(
                 id = 2,
                 name = "beef",
                 isFreezed = false,
-                isFavorite = false,
                 category = IngredientCategory.beef,
                 startAt = LocalDate.of(2024, 11, 12),
                 endAt = LocalDate.of(2024, 11, 19),
@@ -80,9 +83,6 @@ class IngredientControllerTest(
     }
     describe("/api/ingredients로 POST 요청을 하는 경우에") {
         coroutineDebugProbes = true
-        afterTest {
-            clearAllMocks()
-        }
         context("새로운 재료를 추가할 때") {
             val newIngredient = JSONObject()
                 .put("name", "")
@@ -131,7 +131,6 @@ class IngredientControllerTest(
                 id = 1,
                 name = "egg",
                 isFreezed = false,
-                isFavorite = false,
                 category = IngredientCategory.egg,
                 startAt = LocalDate.of(2024, 11, 12),
                 endAt = LocalDate.of(2024, 11, 19)
@@ -154,10 +153,75 @@ class IngredientControllerTest(
                 result
                     .expectBody()
                     .jsonPath("$.name").isEqualTo("egg")
-                    .jsonPath("$.isFavorite").isEqualTo(false)
                     .jsonPath("$.isFreezed").isEqualTo(false)
                     .jsonPath("$.startAt").isEqualTo("2024-11-12")
                     .jsonPath("$.endAt").isEqualTo("2024-11-19")
+            }
+        }
+    }
+
+    describe("/api/ingredients/favorites으로 GET 요청을 하는 경우에") {
+        context("이미 저장된 즐겨찾기 재료가 egg, beef 2개가 있다면") {
+            val response = listOf(
+                FavoriteResponseDto(category = IngredientCategory.egg),
+                FavoriteResponseDto(category = IngredientCategory.beef),
+            )
+            coEvery { ingredientService.getMyFavoriteIngredients() } returns response
+
+            val result = webTestClient.get()
+                .uri("/api/ingredients/favorites")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+
+            it("200의 응답코드를 반환한다.") {
+                result.expectStatus().isOk
+            }
+            it("2개의 즐겨찾기 카테고리를 반환한다.") {
+                result.expectBodyList<FavoriteResponseDto>()
+            }
+            it("즐겨찾기 재료 배열을 반환한다.") {
+                result.expectBodyList<FavoriteResponseDto>()
+            }
+        }
+    }
+
+    describe("/api/ingredients/favorites으로 POST 요청을 하는 경우에") {
+        context("이미 저장된 즐겨찾기 재료가 egg, beef 2개가 있다면") {
+            coEvery { ingredientService.createNewFavorite(any()) } returns FavoriteResponseDto(category = IngredientCategory.beer)
+            val request = JSONObject()
+                .put("category", "beer")
+                .toString()
+            val result = webTestClient.post()
+                .uri("/api/ingredients/favorites")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+            it("추가에 성공하면 201의 응답코드를 반환한다.") {
+                result.expectStatus().isCreated
+            }
+            it("추가에 성공하면 추가된 재료 카테고리를 반환한다.") {
+                result.expectBody().jsonPath("$.category").isEqualTo("beer")
+            }
+        }
+    }
+
+    describe("/api/ingredients/favorites으로 DELETE 요청을 하는 경우에") {
+        coEvery { ingredientService.deleteFavorite(any()) } returns "삭제되었습니다!"
+        context("이미 저장된 즐겨찾기 재료가 egg, beef 2개가 있다면") {
+            val request = JSONObject()
+                .put("category", "beer")
+                .toString()
+            val result = webTestClient
+                .method(HttpMethod.DELETE)
+                .uri("/api/ingredients/favorites")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+
+            it("삭제에 성공하면 200의 응답코드를 반환한다.") {
+                result.expectStatus().isOk
             }
         }
     }

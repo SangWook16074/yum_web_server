@@ -1,4 +1,4 @@
-package com.example.yum_web_server.config
+package com.example.yum_web_server.common.config
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
