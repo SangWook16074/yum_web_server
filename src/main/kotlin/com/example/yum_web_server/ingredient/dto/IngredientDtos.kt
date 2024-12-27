@@ -5,13 +5,14 @@ import com.example.yum_web_server.ingredient.entity.Ingredient
 import com.example.yum_web_server.ingredient.enums.IngredientCategory
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class IngredientRequestDto(
+    @JsonProperty("id")
+    private var _id : Long? = null,
+
     @field:NotBlank(message = "이름을 입력하세요!")
     @JsonProperty("name")
     private var _name : String?,
@@ -37,6 +38,9 @@ data class IngredientRequestDto(
     @JsonProperty("endAt")
     private var _endAt : String?,
 ) {
+    val id : Long?
+        get() = _id
+
     val name : String
         get() = _name!!
     val isFreezed : Boolean
@@ -49,6 +53,7 @@ data class IngredientRequestDto(
         get() = _endAt!!.toLocalDate()
 
     fun toEntity() : Ingredient = Ingredient(
+        id = id,
         name = name,
         isFreezed = isFreezed,
         category = category,

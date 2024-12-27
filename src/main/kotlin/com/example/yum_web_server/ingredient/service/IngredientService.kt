@@ -4,7 +4,6 @@ import com.example.yum_web_server.ingredient.dto.FavoriteRequestDto
 import com.example.yum_web_server.ingredient.dto.FavoriteResponseDto
 import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
 import com.example.yum_web_server.ingredient.dto.IngredientResponseDto
-import com.example.yum_web_server.ingredient.entity.Favorite
 import com.example.yum_web_server.ingredient.repository.FavoriteRepository
 import com.example.yum_web_server.ingredient.repository.IngredientRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class IngredientService @Autowired(required = false) constructor(
+class IngredientService @Autowired(required = false) constructor (
     private val ingredientRepository: IngredientRepository,
     private val favoriteRepository: FavoriteRepository,
 ) {
@@ -25,10 +24,10 @@ class IngredientService @Autowired(required = false) constructor(
         return result.map { it.toResponse() }
     }
     /**
-     * 재료 추가하기
+     * 재료 추가하기 및 업데이트
      */
     @Transactional
-    suspend fun createIngredient(ingredientRequestDto: IngredientRequestDto) : IngredientResponseDto {
+    suspend fun saveIngredient(ingredientRequestDto: IngredientRequestDto) : IngredientResponseDto {
         val result = ingredientRepository.save(ingredientRequestDto.toEntity())
         return result.toResponse()
     }

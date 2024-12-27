@@ -36,8 +36,19 @@ class IngredientController(
     private suspend fun createIngredient(@RequestBody @Valid ingredientRequestDto: IngredientRequestDto)
     : ResponseEntity<IngredientResponseDto>
     {
-        val result = ingredientService.createIngredient(ingredientRequestDto)
+        val result = ingredientService.saveIngredient(ingredientRequestDto)
         return ResponseEntity.status(HttpStatus.CREATED).body(result)
+    }
+
+    /**
+     * 나의 재료 수정 Api
+     */
+    @Operation(description = "나의 재료 수정 Api")
+    @PutMapping
+    private suspend fun updateIngredient(@RequestBody @Valid ingredientRequestDto: IngredientRequestDto)
+    : ResponseEntity<IngredientResponseDto> {
+        val result = ingredientService.saveIngredient(ingredientRequestDto)
+        return ResponseEntity.status(HttpStatus.OK).body(result)
     }
 
     /**

@@ -61,7 +61,7 @@ class IngredientServiceTest : BehaviorSpec({
                 }
             }
 
-            Then("createIngredient()는 생성한 재료를 반환한다.") {
+            Then("saveIngredient()는 생성한 재료를 반환한다.") {
                 val ingredient = Ingredient(
                     id = 1,
                     name = "egg",
@@ -78,7 +78,7 @@ class IngredientServiceTest : BehaviorSpec({
                     _endAt = "2024-11-19",
                 )
                 coEvery { ingredientRepository.save(any()) } returns ingredient
-                val result = ingredientService.createIngredient(ingredientRequestDto)
+                val result = ingredientService.saveIngredient(ingredientRequestDto)
                 coVerify(exactly = 1) { ingredientRepository.save(any()) }
                 with(result) {
                     name shouldBe "egg"

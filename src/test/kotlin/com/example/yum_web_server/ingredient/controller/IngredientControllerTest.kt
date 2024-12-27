@@ -17,9 +17,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
-import org.springframework.web.reactive.function.BodyInserter
 import org.springframework.web.reactive.function.BodyInserters
-import reactor.core.publisher.Mono
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -127,7 +125,7 @@ class IngredientControllerTest(
                 .put("startAt", "2024-11-12")
                 .put("endAt","2024-11-19")
                 .toString()
-            coEvery { ingredientService.createIngredient(any()) } returns IngredientResponseDto(
+            coEvery { ingredientService.saveIngredient(any()) } returns IngredientResponseDto(
                 id = 1,
                 name = "egg",
                 isFreezed = false,
@@ -150,6 +148,44 @@ class IngredientControllerTest(
                     .expectBody<IngredientResponseDto>()
             }
             it("새로 추가된 재료를 응답한다.") {
+                result
+                    .expectBody()
+                    .jsonPath("$.name").isEqualTo("egg")
+                    .jsonPath("$.isFreezed").isEqualTo(false)
+                    .jsonPath("$.startAt").isEqualTo("2024-11-12")
+                    .jsonPath("$.endAt").isEqualTo("2024-11-19")
+            }
+        }
+    }
+
+    describe("/api/ingredients로 PUT 요청을 하는 경우에") {
+        context("기존 재료를 수정한다면") {
+            val newIngredient = JSONObject()
+                .put("name", "egg")
+                .put("isFreezed", false)
+                .put("category", "egg")
+                .put("startAt", "2024-11-12")
+                .put("endAt","2024-11-19")
+                .toString()
+            val updatedIngredient = IngredientResponseDto(
+                id = null,
+                name = "egg",
+                isFreezed = false,
+                category = IngredientCategory.egg,
+                startAt = LocalDate.of(2024, 11, 12),
+                endAt = LocalDate.of(2024, 11, 19)
+            )
+            coEvery { ingredientService.saveIngredient(any()) } returns updatedIngredient
+            val result = webTestClient.put()
+                .uri("/api/ingredients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(updatedIngredient)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+            it("성공시 200의 응답코드를 반환한다.") {
+                result.expectStatus().isOk
+            }
+            it("수정된 재료의 속성을 반환한다.") {
                 result
                     .expectBody()
                     .jsonPath("$.name").isEqualTo("egg")
