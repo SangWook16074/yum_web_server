@@ -1,5 +1,6 @@
 package com.example.yum_web_server.ingredient.controller
 
+import com.example.yum_web_server.common.dto.BaseResponse
 import com.example.yum_web_server.ingredient.dto.FavoriteRequestDto
 import com.example.yum_web_server.ingredient.dto.FavoriteResponseDto
 import com.example.yum_web_server.ingredient.dto.IngredientRequestDto
@@ -88,9 +89,9 @@ class IngredientController(
     @Operation(description = "즐겨찾기 재료 삭제하기 Api")
     @DeleteMapping("favorites")
     private suspend fun deleteFavorite(@Valid @RequestBody favoriteRequestDto: FavoriteRequestDto)
-    : ResponseEntity<String>
+    : ResponseEntity<BaseResponse<String>>
     {
         val result = ingredientService.deleteFavorite(favoriteRequestDto)
-        return ResponseEntity.status(HttpStatus.OK).body(result)
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse(data = result))
     }
 }
