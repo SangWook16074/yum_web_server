@@ -75,4 +75,34 @@ class IngredientRepositoryTest @Autowired constructor(
         }
     }
 
+    "save 메소드를 통해서 Long이 아닌 Int 타입도 똑같이 적용된다." {
+        val updatedIngredient = Ingredient(
+            id = 1,
+            name = "changed egg",
+            isFreezed = true,
+            category = IngredientCategory.beer,
+            startAt = LocalDate.of(2024, 11, 12),
+            endAt = LocalDate.of(2024, 11, 19)
+        )
+        val prevIngredient = ingredientRepository.findById(1L)!!
+        with(prevIngredient) {
+            id shouldBe 1L
+            name shouldBe "egg"
+            isFreezed shouldBe false
+            category shouldBe IngredientCategory.egg
+            startAt = LocalDate.of(2024, 11, 12)
+            endAt = LocalDate.of(2024, 11, 19)
+        }
+        ingredientRepository.save(updatedIngredient)
+        val result = ingredientRepository.findById(1L)!!
+        with(result) {
+            id shouldBe 1L
+            name shouldBe "changed egg"
+            isFreezed shouldBe true
+            category shouldBe IngredientCategory.beer
+            startAt shouldBe LocalDate.of(2024, 11, 12)
+            endAt shouldBe LocalDate.of(2024, 11, 19)
+        }
+    }
+
 })
