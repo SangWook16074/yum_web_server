@@ -45,6 +45,24 @@ class IngredientRepositoryTest @Autowired constructor(
         }
     }
 
+    "save 메소드를 통해서 endAt이 null인 데이터를 저장할 수 있다." {
+        val newIngredient = Ingredient(
+            name = "beer",
+            isFreezed = false,
+            category = IngredientCategory.beer,
+            startAt = LocalDate.of(2024, 11, 12),
+            endAt = null,
+        )
+        val result = ingredientRepository.save(newIngredient)
+        with(result) {
+            name shouldBe "beer"
+            isFreezed shouldBe false
+            category shouldBe IngredientCategory.beer
+            startAt shouldBe LocalDate.of(2024, 11, 12)
+            endAt shouldBe null
+        }
+    }
+
     "save 메소드를 통해서 기존의 재료를 수정할 수 있다." {
         val updatedIngredient = Ingredient(
             id = 1L,
@@ -104,5 +122,4 @@ class IngredientRepositoryTest @Autowired constructor(
             endAt shouldBe LocalDate.of(2024, 11, 19)
         }
     }
-
 })

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS ingredient (
     is_freezed BOOLEAN NOT NULL,
     category VARCHAR(100) NOT NULL,
     start_at TIMESTAMP NOT NULL,
-    end_at TIMESTAMP NOT NULL
+    end_at TIMESTAMP NULL
 );
 
 CREATE TABLE IF NOT EXISTS favorite (

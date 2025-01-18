@@ -113,7 +113,29 @@ class IngredientControllerTest(
                 result
                     .expectBody()
                     .jsonPath("$['data']._startAt").isEqualTo("잘못된 날짜형식입니다!")
-                    .jsonPath("$['data']._endAt").isEqualTo("잘못된 날짜형식입니다!")
+            }
+        }
+
+        context("새로운 재료는 유통기한이 없다면") {
+            val newIngredient = JSONObject()
+                .put("name", "egg")
+                .put("isFreezed", false)
+                .put("category", "egg")
+                .put("startAt", "2024-11-11")
+                .put("endAt", "")
+                .toString()
+
+            val result = webTestClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(newIngredient)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+
+            coEvery { ingredientService.saveIngredient(any()) } returns IngredientResponseDto(1L, "egg", false, IngredientCategory.egg, LocalDate.of(2024, 11, 11), null)
+
+            it("Null을 저장한다.") {
+                result.expectStatus().isCreated
             }
         }
 

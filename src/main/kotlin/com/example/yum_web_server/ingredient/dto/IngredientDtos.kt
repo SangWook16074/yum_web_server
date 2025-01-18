@@ -32,7 +32,7 @@ data class IngredientRequestDto(
     private var _startAt : String?,
 
     @field:Pattern(
-        regexp = "^([12]\\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])\$",
+        regexp = "^|^([12]\\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])\$",
         message = "잘못된 날짜형식입니다!"
     )
     @JsonProperty("endAt")
@@ -48,8 +48,8 @@ data class IngredientRequestDto(
     val category: IngredientCategory
         get() = IngredientCategory.valueOf(_category!!)
     val startAt : LocalDate
-        get() = _startAt!!.toLocalDate()
-    val endAt : LocalDate
+        get() = _startAt!!.toLocalDate()!!
+    val endAt : LocalDate?
         get() = _endAt!!.toLocalDate()
 
     fun toEntity() : Ingredient = Ingredient(
@@ -61,8 +61,10 @@ data class IngredientRequestDto(
         endAt = endAt,
     )
 
-    private fun String.toLocalDate() : LocalDate =
-        LocalDate.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    private fun String?.toLocalDate() : LocalDate? {
+        if (this.isNullOrEmpty()) return null
+        return LocalDate.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    }
 }
 
 data class IngredientResponseDto(
@@ -71,5 +73,5 @@ data class IngredientResponseDto(
     val isFreezed : Boolean,
     val category: IngredientCategory,
     val startAt : LocalDate,
-    val endAt: LocalDate,
+    val endAt: LocalDate?,
 )

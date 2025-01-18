@@ -22,13 +22,13 @@ data class Ingredient(
     @Column
     var category : IngredientCategory,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
     var startAt : LocalDate,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column
-    var endAt : LocalDate,
+    var endAt : LocalDate? = null,
 ) {
     fun toResponse() : IngredientResponseDto = IngredientResponseDto(
         id = id,

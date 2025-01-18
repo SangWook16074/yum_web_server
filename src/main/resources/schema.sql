@@ -1,15 +1,17 @@
-DROP TABLE IF EXISTS ingredient;
-DROP TABLE IF EXISTS favorite;
+--DROP TABLE IF EXISTS ingredient;
+--DROP TABLE IF EXISTS favorite;
+--
+--CREATE TABLE IF NOT EXISTS ingredient (
+--    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+--    name VARCHAR(255) NOT NULL,
+--    is_freezed BOOLEAN NOT NULL,
+--    category VARCHAR(100) NOT NULL,
+--    start_at TIMESTAMP(6) NOT NULL,
+--    end_at TIMESTAMP(6) NOT NULL
+--);
+--
+--CREATE TABLE IF NOT EXISTS favorite (
+--    category VARCHAR(100) PRIMARY KEY
+--);
 
-CREATE TABLE IF NOT EXISTS ingredient (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    is_freezed BOOLEAN NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    start_at TIMESTAMP(6) NOT NULL,
-    end_at TIMESTAMP(6) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS favorite (
-    category VARCHAR(100) PRIMARY KEY
-);
+ALTER TABLE IF EXISTS ingredient  MODIFY end_at TIMESTAMP(6) NULL;
