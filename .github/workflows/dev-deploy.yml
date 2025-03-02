@@ -3,8 +3,6 @@ name: Deploy develop CICD
 on:
   push:
     branches: [ "develop" ]
-  merge_group:
-    branches: [ "develop" ]
 
 jobs:
   build:
