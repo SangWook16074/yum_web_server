@@ -182,13 +182,6 @@ class IngredientControllerTest(
 
     describe("/api/ingredients로 PUT 요청을 하는 경우에") {
         context("기존 재료를 수정한다면") {
-            val newIngredient = JSONObject()
-                .put("name", "egg")
-                .put("isFreezed", false)
-                .put("category", "egg")
-                .put("startAt", "2024-11-12")
-                .put("endAt","2024-11-19")
-                .toString()
             val updatedIngredient = IngredientResponseDto(
                 id = null,
                 name = "egg",
