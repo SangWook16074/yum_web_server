@@ -3,8 +3,6 @@ name: Deploy develop CICD
 on:
   push:
     branches: [ "develop" ]
-  merge_group:
-    branches: [ "develop" ]
 
 jobs:
   build:
@@ -55,5 +53,5 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPONAME }}:latest
             sudo docker stop yum-ingredient-server-container
-            sudo docker-compose -f /home/${{ secrets.AWS_USER }}/app/yum_web_server/docker-compose.yml up -d
+            sudo docker-compose -f /home/${{ secrets.AWS_USER }}/app/yum_ingredient-server/docker-compose.yml up -d
             sudo docker image prune -a -f
