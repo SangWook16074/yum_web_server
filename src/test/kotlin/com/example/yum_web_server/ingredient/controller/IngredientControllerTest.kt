@@ -178,6 +178,46 @@ class IngredientControllerTest(
                     .jsonPath("$.endAt").isEqualTo("2024-11-19")
             }
         }
+
+        context("기한이 무제한인 새로운 재료가 추가된다면") {
+            val newIngredient = JSONObject()
+                .put("name", "egg")
+                .put("isFreezed", false)
+                .put("category", "egg")
+                .put("startAt", "2024-11-12")
+                .put("endAt",null)
+                .toString()
+            coEvery { ingredientService.saveIngredient(any()) } returns IngredientResponseDto(
+                id = 1,
+                name = "egg",
+                isFreezed = false,
+                category = IngredientCategory.egg,
+                startAt = LocalDate.of(2024, 11, 12),
+                endAt = null,
+            )
+            val result = webTestClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(newIngredient)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+            it("201의 응답코드를 반환한다.") {
+                result
+                    .expectStatus().isCreated
+            }
+            it("IngredientResponseDto를 반환한다.") {
+                result
+                    .expectBody<IngredientResponseDto>()
+            }
+            it("새로 추가된 재료를 응답한다.") {
+                result
+                    .expectBody()
+                    .jsonPath("$.name").isEqualTo("egg")
+                    .jsonPath("$.isFreezed").isEqualTo(false)
+                    .jsonPath("$.startAt").isEqualTo("2024-11-12")
+                    .jsonPath("$.endAt").doesNotExist()
+            }
+        }
     }
 
     describe("/api/ingredients로 PUT 요청을 하는 경우에") {

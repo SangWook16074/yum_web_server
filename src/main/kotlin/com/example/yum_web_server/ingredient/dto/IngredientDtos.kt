@@ -50,7 +50,7 @@ data class IngredientRequestDto(
     val startAt : LocalDate
         get() = _startAt!!.toLocalDate()!!
     val endAt : LocalDate?
-        get() = _endAt!!.toLocalDate()
+        get() = _endAt.toLocalDate()
 
     fun toEntity() : Ingredient = Ingredient(
         id = id,

@@ -11,6 +11,8 @@ services:
     restart: on-failure
     volumes:
       - mysql_data:/var/lib/mysql  # MySQL 데이터를 저장할 볼륨 정의
+    networks:
+      - yum-server-net
 
   # Spring Boot 서비스 정의
   app:
@@ -23,9 +25,11 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}  # 데이터베이스 사용자 이름
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}  # 데이터베이스 사용자 비밀번호
     restart: on-failure
+    networks:
+      - yum-server-net
 
 networks:
-  network1:
+  yum-server-net:
     name: yum-server-net
     external: true
 
